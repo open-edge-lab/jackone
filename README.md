@@ -188,3 +188,30 @@ scartate e ripescate finché non esce un numero.
 node server/index.js --port 3210 --rigged
 node scripts/smoke.mjs 3210    # gioca una mano da terminale e stampa il registro
 ```
+
+## Deploy sul server di sviluppo
+
+Il gioco gira in un container e risponde su **https://172.16.2.12/jackone/**, dietro nginx.
+
+```bash
+ssh andrea@172.16.2.12
+cd /opt/jackone
+git pull
+docker compose up -d --build     # ricostruisce e riavvia
+docker compose logs -f           # log del container
+```
+
+Il container ascolta solo su `127.0.0.1:3000`: dall'esterno si passa sempre da nginx
+(`/etc/nginx/sites-available/jackone`, copia di `deploy/nginx/jackone.conf`). La barra
+finale in `proxy_pass` toglie il prefisso, così il server continua a vedere richieste
+sulla root e non sa di stare dietro a nulla.
+
+Il certificato è autofirmato e vale per l'indirizzo IP: al primo accesso il browser
+avvisa, si prosegue lo stesso. Serve https e non http perché il gioco usa
+`navigator.clipboard` e la fotocamera per gli avatar, disattivati fuori dai contesti sicuri.
+
+Per collaudare l'installazione senza aprire il browser:
+
+```bash
+JACKONE_TLS_INSECURE=1 node scripts/smoke.mjs wss://172.16.2.12/jackone/
+```
