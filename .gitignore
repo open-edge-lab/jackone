@@ -1,0 +1,15 @@
+# Dipendenze: si reinstallano con `npm ci` a partire da package-lock.json
+node_modules/
+
+# Log e file di diagnostica di npm
+npm-debug.log*
+*.log
+
+# Variabili d'ambiente locali
+.env
+.env.local
+
+# Spazzatura del sistema operativo
+Thumbs.db
+desktop.ini
+.DS_Store
