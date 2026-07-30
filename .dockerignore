@@ -1,0 +1,14 @@
+# Le dipendenze le reinstalla `npm ci` dentro l'immagine, con l'architettura giusta.
+node_modules/
+.git/
+.gitignore
+.vscode/
+
+# Roba da sviluppo: nel container non serve a nessuno.
+test/
+scripts/
+deploy/
+*.md
+Dockerfile
+.dockerignore
+docker-compose.yml

@@ -3,7 +3,7 @@
  * Le carte già viste non vengono rianimate: solo le nuove entrano in scena.
  */
 
-import { cardLabel } from '/shared/cards.js';
+import { cardLabel } from '../../shared/cards.js';
 
 /** Id delle carte già mostrate, per animare solo quelle appena arrivate. */
 const seen = new Set();

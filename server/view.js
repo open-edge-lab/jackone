@@ -23,13 +23,16 @@ const DISCARD_PREVIEW = 4;
  * Le immagini non viaggiano nello stato — che viene ritrasmesso a ogni azione —
  * ma vengono scaricate una volta sola dal server HTTP. La versione nella query
  * serve a invalidare la cache del browser quando la foto cambia.
+ *
+ * L'indirizzo è relativo al documento, non assoluto: così vale sia servendo il
+ * gioco sulla root sia dietro un reverse proxy su un sottopercorso.
  * @param {object} room
  * @param {string} id
  * @returns {string|null}
  */
 function avatarUrl(room, id) {
   const avatar = room.avatars.get(id);
-  return avatar ? `/avatar/${room.code}/${id}?v=${avatar.version}` : null;
+  return avatar ? `avatar/${room.code}/${id}?v=${avatar.version}` : null;
 }
 
 /**

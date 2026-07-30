@@ -3,13 +3,14 @@
  * da mostrare a ogni aggiornamento.
  */
 
-import { C2S, EV, PHASE, S2C } from '/shared/protocol.js';
+import { C2S, EV, PHASE, S2C } from '../shared/protocol.js';
+import { BASE } from './base.js';
 import {
   cleanNickname,
   preferredColorIndex,
   randomNickname,
   validateNickname,
-} from '/shared/identity.js';
+} from '../shared/identity.js';
 import { connect, on, send, setToken } from './net.js';
 import { app, subscribe, update } from './store.js';
 import { paintAvatar } from './ui/avatar.js';
@@ -226,7 +227,7 @@ el.btnLeaveTable.addEventListener('click', async () => {
 async function copyInvite() {
   const code = app.state?.code;
   if (!code) return;
-  const link = `${location.origin}/?${CODE_PARAM}=${code}`;
+  const link = `${location.origin}${BASE}?${CODE_PARAM}=${code}`;
   try {
     if (navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(link);

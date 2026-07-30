@@ -3,8 +3,8 @@
  * Il client non calcola nulla: disegna soltanto lo stato ricevuto dal server.
  */
 
-import { C2S, PHASE } from '/shared/protocol.js';
-import { MIN_BET, formatScore } from '/shared/cards.js';
+import { C2S, PHASE } from '../../shared/protocol.js';
+import { MIN_BET, formatScore } from '../../shared/cards.js';
 import { send } from '../net.js';
 import { avatarElement, colorOf, playerTag } from './avatar.js';
 import { renderHand } from './card.js';

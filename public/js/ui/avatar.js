@@ -7,7 +7,7 @@
  * indirizzo versionato: i byte li scarica il browser, non passano dallo stato.
  */
 
-import { ON_COLOR, colorAt, nicknameInitials } from '/shared/identity.js';
+import { ON_COLOR, colorAt, nicknameInitials } from '../../shared/identity.js';
 
 /**
  * @param {{name: string, colorIndex?: number}} player

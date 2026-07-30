@@ -1,0 +1,19 @@
+services:
+  jackone:
+    build: .
+    image: jackone:latest
+    container_name: jackone
+    restart: unless-stopped
+    # Esposto solo sul loopback: l'unico che deve arrivarci è nginx, che sta
+    # sulla stessa macchina. Dall'esterno si passa da https://<host>/jackone/.
+    ports:
+      - '127.0.0.1:3000:3000'
+    environment:
+      # Fusi orari: gli orari nel registro della partita sono quelli del client,
+      # ma i log del container conviene averli in ora locale.
+      TZ: Europe/Rome
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'

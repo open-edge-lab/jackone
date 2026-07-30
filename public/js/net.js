@@ -3,7 +3,8 @@
  * con backoff e ripresa della sessione tramite token salvato nel browser.
  */
 
-import { C2S } from '/shared/protocol.js';
+import { C2S } from '../shared/protocol.js';
+import { BASE } from './base.js';
 
 const TOKEN_KEY = 'jackone.token';
 const MAX_RETRY = 5000;
@@ -51,7 +52,7 @@ function emit(type, payload) {
 export function connect() {
   closedByUs = false;
   const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  socket = new WebSocket(`${protocol}//${location.host}`);
+  socket = new WebSocket(`${protocol}//${location.host}${BASE}`);
 
   socket.addEventListener('open', () => {
     retryDelay = 500;

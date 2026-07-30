@@ -10,7 +10,7 @@
  * ingresso e non la conserva oltre la vita della stanza.
  */
 
-import { AVATAR_MAX_BYTES, AVATAR_SIZE, parseAvatarDataUrl } from '/shared/avatar.js';
+import { AVATAR_MAX_BYTES, AVATAR_SIZE, parseAvatarDataUrl } from '../../shared/avatar.js';
 
 const PHOTO_KEY = 'jackone.avatar';
 

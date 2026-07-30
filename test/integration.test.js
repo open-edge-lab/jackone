@@ -542,13 +542,13 @@ test('la foto di un giocatore viaggia come indirizzo e si scarica dal server', a
   await settle();
 
   const url = host.state.players[0].avatar;
-  assert.match(url, new RegExp(`^/avatar/${code}/${playerId}\\?v=1$`));
+  assert.match(url, new RegExp(`^avatar/${code}/${playerId}\\?v=1$`));
   assert.ok(
     JSON.stringify(host.state).length < 4000,
     'i byte dell\'immagine non finiscono dentro lo stato',
   );
 
-  const risposta = await fetch(`http://127.0.0.1:${port}${url}`);
+  const risposta = await fetch(`http://127.0.0.1:${port}/${url}`);
   assert.equal(risposta.status, 200);
   assert.equal(risposta.headers.get('content-type'), 'image/png');
   assert.ok((await risposta.arrayBuffer()).byteLength > 0);
@@ -578,7 +578,7 @@ test('anche gli ospiti hanno la loro foto', async () => {
 
   const url = host.state.viewers[0].avatar;
   assert.ok(url, 'i giocatori vedono la foto dell\'ospite');
-  assert.equal((await fetch(`http://127.0.0.1:${port}${url}`)).status, 200);
+  assert.equal((await fetch(`http://127.0.0.1:${port}/${url}`)).status, 200);
 
   host.close();
   ospite.close();

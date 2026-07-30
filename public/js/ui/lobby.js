@@ -3,6 +3,7 @@
  * e comandi dell'host.
  */
 
+import { BASE } from '../base.js';
 import { avatarElement, colorOf } from './avatar.js';
 
 const el = {
@@ -44,7 +45,7 @@ function personRow(person, tagText) {
  */
 export function renderLobby(state) {
   el.code.textContent = state.code;
-  el.url.textContent = location.host;
+  el.url.textContent = location.host + BASE;
 
   el.players.replaceChildren(...state.players.map((player) => {
     let tag = '';
