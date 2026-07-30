@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1b2a">
+  <title>JackOne — Blackjack con le carte UNO</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23e63946'/><text x='16' y='23' font-size='18' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>J1</text></svg>">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/cards.css">
+  <link rel="stylesheet" href="/css/table.css">
+</head>
+<body>
+
+<!-- ------------------------------------------------------------ ingresso -->
+<section id="screen-join" class="screen screen--center">
+  <div class="brand">
+    <span class="brand__mark">J1</span>
+    <h1>JackOne</h1>
+    <p class="brand__claim">Blackjack giocato con le carte UNO. Arriva a 21, sopravvivi ai +4.</p>
+  </div>
+
+  <form id="form-join" class="panel">
+    <div class="nick">
+      <button id="btn-photo" type="button" class="nick__photo" title="Scegli una foto" aria-label="Scegli una foto">
+        <span id="nick-avatar" class="avatar avatar--lg">?</span>
+        <span class="nick__photo-hint" aria-hidden="true">📷</span>
+      </button>
+      <input id="input-photo" type="file" accept="image/*" class="hidden">
+      <div class="nick__text">
+        <p id="nick-preview" class="nick__name">Scegli un nickname</p>
+        <p id="nick-note" class="nick__note">Sarà il nome con cui ti vedono al tavolo.</p>
+        <button id="btn-photo-clear" type="button" class="btn btn--link hidden">Rimuovi la foto</button>
+      </div>
+      <button id="btn-random" type="button" class="btn btn--icon" title="Proponi un nickname" aria-label="Proponi un nickname">🎲</button>
+    </div>
+
+    <label class="field">
+      <span>Nickname</span>
+      <input id="input-name" type="text" maxlength="16" autocomplete="nickname"
+             placeholder="Come ti chiamiamo?" spellcheck="false" required>
+    </label>
+
+    <button id="btn-create" type="button" class="btn btn--primary btn--block">Crea un tavolo</button>
+
+    <div class="divider"><span>oppure</span></div>
+
+    <label class="field">
+      <span>Codice del tavolo</span>
+      <input id="input-code" type="text" maxlength="4" autocapitalize="characters" placeholder="ABCD" class="input--code">
+    </label>
+    <button id="btn-join" type="submit" class="btn btn--block">Entra nel tavolo</button>
+    <button id="btn-watch" type="button" class="btn btn--ghost btn--block">Entra come ospite</button>
+    <p class="hint hint--center">Da ospite guardi la partita e commenti in chat, senza occupare un posto.</p>
+  </form>
+
+  <details class="rules">
+    <summary>Come si gioca</summary>
+    <ul>
+      <li>I <b>numeri</b> valgono il loro valore, i <b>cambia colore</b> mezzo punto, le altre speciali zero.</li>
+      <li>I <b>+2 / +4</b> ti obbligano a pescare altre carte: gli obblighi si sommano.</li>
+      <li>Il <b>divieto</b> ti blocca: chiude il turno e annulla l'obbligo di pescaggio, oppure ti dà un gettone per fermare il banco.</li>
+      <li>Il <b>cambio giro</b> ti costringe a scambiare tutta la mano con un altro giocatore.</li>
+      <li>Le <b>due carte iniziali</b> sono sempre numeri: le speciali che escono finiscono negli scarti.</li>
+      <li>Il banco pesca fino a 17: sul banco il divieto annulla solo gli obblighi di pescaggio, il cambio giro non ha effetto.</li>
+      <li>Il <b>21 esatto</b> paga il doppio.</li>
+    </ul>
+  </details>
+</section>
+
+<!-- --------------------------------------------------------------- lobby -->
+<section id="screen-lobby" class="screen screen--center hidden">
+  <div class="panel panel--wide">
+    <p class="eyebrow">Codice del tavolo</p>
+    <p id="lobby-code" class="room-code">····</p>
+    <p class="hint">Gli altri giocatori aprono <b id="lobby-url">questo indirizzo</b> e inseriscono il codice.</p>
+    <button id="btn-copy-lobby" type="button" class="btn btn--ghost btn--block">Copia invito</button>
+
+    <ul id="lobby-players" class="player-list"></ul>
+
+    <div id="lobby-viewers-box" class="hidden">
+      <p class="eyebrow">Ospiti collegati</p>
+      <ul id="lobby-viewers" class="player-list player-list--viewers"></ul>
+    </div>
+
+    <div id="lobby-host" class="lobby-actions hidden">
+      <button id="btn-add-bot" type="button" class="btn">+ Bot</button>
+      <button id="btn-remove-bot" type="button" class="btn">− Bot</button>
+      <button id="btn-start" type="button" class="btn btn--primary">Inizia la partita</button>
+    </div>
+    <p id="lobby-wait" class="hint hint--center">In attesa che l'host inizi la partita…</p>
+    <button id="btn-leave-lobby" type="button" class="btn btn--ghost btn--block">Esci dal tavolo</button>
+  </div>
+</section>
+
+<!-- --------------------------------------------------------------- tavolo -->
+<section id="screen-table" class="screen hidden">
+  <header class="topbar">
+    <span class="topbar__code">Tavolo <b id="table-code"></b></span>
+    <button id="btn-copy-table" type="button" class="btn btn--sm btn--ghost" title="Copia il link d'invito">Invita</button>
+    <span class="topbar__hand">Mano <b id="table-hand">1</b></span>
+    <span id="table-viewers" class="viewers hidden"></span>
+    <span id="table-phase" class="topbar__phase"></span>
+    <button id="btn-leave-table" type="button" class="btn btn--sm btn--ghost">Esci</button>
+    <button id="btn-log-toggle" type="button" class="btn btn--icon" aria-label="Mostra il registro">☰</button>
+  </header>
+
+  <main class="table">
+    <section class="dealer">
+      <div class="dealer__head">
+        <h2>Banco</h2>
+        <span id="dealer-score" class="score">—</span>
+      </div>
+      <div id="dealer-cards" class="hand hand--dealer"></div>
+
+      <div id="discard" class="discard hidden">
+        <span class="discard__label">Scarti <b id="discard-count">0</b></span>
+        <div id="discard-cards" class="discard__pile"></div>
+      </div>
+    </section>
+
+    <div id="players" class="players"></div>
+  </main>
+
+  <div id="you-bar" class="you-bar hidden"></div>
+
+  <footer id="controls" class="controls"></footer>
+
+  <div id="timer" class="timer hidden"><div id="timer-bar" class="timer__bar"></div></div>
+
+  <aside id="log-panel" class="log-panel">
+    <h2>Registro</h2>
+    <ul id="log-list" class="log-list"></ul>
+    <form id="form-chat" class="chat">
+      <input id="input-chat" type="text" maxlength="200" placeholder="Scrivi al tavolo…" autocomplete="off">
+      <button type="submit" class="btn btn--icon" aria-label="Invia">➤</button>
+    </form>
+  </aside>
+</section>
+
+<!-- ------------------------------------------------------------- overlay -->
+<div id="modal" class="modal hidden">
+  <div class="modal__box">
+    <h2 id="modal-title"></h2>
+    <div id="modal-body"></div>
+    <div id="modal-actions" class="modal__actions"></div>
+  </div>
+</div>
+
+<div id="confirm" class="modal modal--confirm hidden">
+  <div class="modal__box modal__box--sm">
+    <h2 id="confirm-title"></h2>
+    <p id="confirm-text" class="hint"></p>
+    <div class="modal__actions">
+      <button id="confirm-cancel" type="button" class="btn">Annulla</button>
+      <button id="confirm-ok" type="button" class="btn btn--primary">Conferma</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+<div id="connection" class="connection hidden">Connessione persa, riprovo…</div>
+
+<script type="module" src="/js/main.js"></script>
+</body>
+</html>

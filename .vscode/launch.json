@@ -1,0 +1,106 @@
+{
+  // Configurazioni di avvio di JackOne.
+  //
+  // Il server Node serve anche il client: "server + client" avvia il processo,
+  // stampa il link nella Debug Console e vi aggancia il debugger del browser,
+  // così i breakpoint funzionano sia in server/ sia in public/js e shared/.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "JackOne: server + client",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/index.js",
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "env": {
+        // Deve restare allineata all'url di "JackOne: client (Edge)".
+        "PORT": "3000"
+      },
+      "skipFiles": ["<node_internals>/**"],
+      "serverReadyAction": {
+        // Intercetta la riga "Su questo PC:  http://localhost:3000" stampata all'avvio.
+        "pattern": "Su questo PC:\\s+(https?://\\S+)",
+        "uriFormat": "%s",
+        "action": "startDebugging",
+        "name": "JackOne: client (Edge)"
+      },
+      "presentation": { "group": "1-avvio", "order": 1 }
+    },
+
+    {
+      "name": "JackOne: server (apre il browser di sistema)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/index.js",
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "env": { "PORT": "3000" },
+      "skipFiles": ["<node_internals>/**"],
+      "serverReadyAction": {
+        "pattern": "Su questo PC:\\s+(https?://\\S+)",
+        "uriFormat": "%s",
+        "action": "openExternally"
+      },
+      "presentation": { "group": "1-avvio", "order": 2 }
+    },
+
+    {
+      "name": "JackOne: server con mazzo truccato",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/index.js",
+      // Porta le carte speciali in cima al mazzo: utile per provare tutti gli effetti.
+      "args": ["--rigged"],
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "env": { "PORT": "3000" },
+      "skipFiles": ["<node_internals>/**"],
+      "serverReadyAction": {
+        "pattern": "Su questo PC:\\s+(https?://\\S+)",
+        "uriFormat": "%s",
+        "action": "openExternally"
+      },
+      "presentation": { "group": "1-avvio", "order": 3 }
+    },
+
+    {
+      // Avviata in automatico da "server + client". Lanciandola a mano più volte
+      // si aprono più giocatori: ogni sessione usa un profilo Edge separato.
+      "name": "JackOne: client (Edge)",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/public",
+      "pathMapping": {
+        // I moduli condivisi sono serviti da /shared/ ma stanno fuori da public/.
+        "/shared/": "${workspaceFolder}/shared/"
+      },
+      "presentation": { "group": "1-avvio", "order": 4 }
+    },
+
+    {
+      "name": "JackOne: tutti i test",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--test", "test/"],
+      "console": "internalConsole",
+      "skipFiles": ["<node_internals>/**"],
+      "presentation": { "group": "2-test", "order": 1 }
+    },
+
+    {
+      "name": "JackOne: test del file aperto",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--test", "${relativeFile}"],
+      "console": "internalConsole",
+      "skipFiles": ["<node_internals>/**"],
+      "presentation": { "group": "2-test", "order": 2 }
+    }
+  ]
+}

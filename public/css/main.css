@@ -1,0 +1,389 @@
+/* Base, tipografia, componenti comuni (pannelli, bottoni, modale, toast). */
+
+:root {
+  --c-bg: #0b1622;
+  --c-surface: #14263a;
+  --c-surface-2: #1d3552;
+  --c-line: rgba(255, 255, 255, 0.12);
+  --c-text: #e9eef5;
+  --c-muted: #9db0c6;
+  --c-accent: #ffb703;
+  --c-danger: #e63946;
+  --c-ok: #06d6a0;
+  --uno-red: #ed1c24;
+  --uno-yellow: #ffde00;
+  --uno-green: #00a651;
+  --uno-blue: #0072bc;
+  --radius: 14px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #1b3a5c 0%, transparent 60%),
+    var(--c-bg);
+  color: var(--c-text);
+  font: 16px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1, h2, h3 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
+
+.hidden { display: none !important; }
+
+.screen { min-height: 100%; }
+
+.screen--center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px 16px 40px;
+}
+
+/* --------------------------------------------------------------- marchio */
+
+.brand { text-align: center; }
+
+.brand__mark {
+  display: inline-grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: linear-gradient(140deg, var(--uno-red), #b3121a);
+  box-shadow: var(--shadow);
+  font-size: 26px;
+  font-weight: 800;
+  transform: rotate(-6deg);
+}
+
+.brand h1 { margin: 14px 0 4px; font-size: 40px; }
+
+.brand__claim { margin: 0; color: var(--c-muted); max-width: 34ch; }
+
+/* -------------------------------------------------------------- pannelli */
+
+.panel {
+  width: min(420px, 100%);
+  padding: 22px;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  background: var(--c-surface);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.panel--wide { width: min(520px, 100%); }
+
+.eyebrow {
+  margin: 0;
+  color: var(--c-muted);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.room-code {
+  margin: 0;
+  font-size: 54px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--c-accent);
+}
+
+.hint { margin: 0; color: var(--c-muted); font-size: 14px; }
+.hint--center { text-align: center; }
+
+/* ----------------------------------------------------------------- campi */
+
+.field { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--c-muted); }
+
+input[type="text"], input[type="number"] {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-size: 16px;
+}
+
+input:focus-visible, button:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+.input--code {
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  font-size: 24px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--c-muted);
+  font-size: 13px;
+}
+
+.divider::before, .divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--c-line);
+}
+
+/* --------------------------------------------------------------- bottoni */
+
+.btn {
+  padding: 12px 18px;
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  background: var(--c-surface-2);
+  color: var(--c-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.08s ease, filter 0.15s ease;
+}
+
+.btn:hover:not(:disabled) { filter: brightness(1.15); }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn--primary {
+  background: linear-gradient(140deg, var(--uno-red), #c1121f);
+  border-color: transparent;
+}
+
+.btn--accent {
+  background: linear-gradient(140deg, var(--c-accent), #e08700);
+  border-color: transparent;
+  color: #241a00;
+}
+
+.btn--ghost { background: transparent; }
+.btn--block { width: 100%; }
+.btn--icon { padding: 10px 12px; }
+.btn--sm { padding: 6px 12px; font-size: 13px; }
+
+.btn--link {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--c-muted);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------- avatar */
+
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--c-surface-2);
+  color: var(--c-text);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.avatar--sm { width: 22px; height: 22px; font-size: 10px; }
+.avatar--lg { width: 54px; height: 54px; font-size: 20px; }
+
+/* La foto riempie la pastiglia; il colore del posto resta come cornice. */
+.avatar--photo {
+  background-size: cover;
+  background-position: center;
+  box-shadow: inset 0 0 0 2px var(--avatar-color, transparent);
+}
+
+.player-tag { display: inline-flex; align-items: center; gap: 8px; }
+
+/* ------------------------------------------------- anteprima del nickname */
+
+.nick {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--c-line);
+  border-radius: 12px;
+  background: var(--c-bg);
+}
+
+.nick__text { flex: 1; min-width: 0; }
+
+.nick__name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.nick__note { margin: 2px 0 0; font-size: 12.5px; color: var(--c-muted); }
+.nick__note--error { color: #ff8f98; }
+
+/* La pastiglia è cliccabile: l'icona in basso a destra lo rende evidente. */
+.nick__photo {
+  position: relative;
+  flex: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.nick__photo-hint {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--c-line);
+  background: var(--c-surface-2);
+  font-size: 11px;
+  line-height: 1;
+}
+
+.nick__text .btn--link { margin-top: 6px; }
+
+/* ---------------------------------------------------------------- regole */
+
+.rules {
+  width: min(520px, 100%);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.rules summary { cursor: pointer; font-weight: 600; }
+.rules ul { margin: 12px 0 4px; padding-left: 20px; color: var(--c-muted); }
+.rules li { margin-bottom: 6px; }
+
+/* ------------------------------------------------------- lista giocatori */
+
+.player-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+
+.player-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  background: var(--c-bg);
+}
+
+.player-list .tag {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--c-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Gli ospiti stanno in un elenco più sobrio: non sono al tavolo. */
+#lobby-viewers-box { display: grid; gap: 8px; }
+.player-list--viewers li { padding: 7px 12px; font-size: 14px; opacity: 0.85; }
+
+.lobby-actions { display: flex; gap: 8px; }
+.lobby-actions .btn--primary { margin-left: auto; }
+
+/* --------------------------------------------------------------- modale */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(4, 10, 18, 0.72);
+  backdrop-filter: blur(3px);
+  z-index: 40;
+}
+
+.modal__box {
+  width: min(520px, 100%);
+  max-height: 86vh;
+  overflow: auto;
+  padding: 24px;
+  border: 1px solid var(--c-line);
+  border-radius: 18px;
+  background: var(--c-surface);
+  box-shadow: var(--shadow);
+  animation: pop 0.18s ease-out;
+}
+
+.modal__box h2 { margin-bottom: 14px; }
+.modal__box--sm { width: min(380px, 100%); }
+.modal__actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+
+/* La conferma sta sopra al riepilogo, da cui può essere aperta. */
+.modal--confirm { z-index: 45; }
+
+@keyframes pop {
+  from { transform: scale(0.94); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* --------------------------------------------------------------- avvisi */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: var(--c-danger);
+  font-weight: 600;
+  box-shadow: var(--shadow);
+  z-index: 50;
+}
+
+.toast--info { background: var(--c-surface-2); }
+.toast--ok { background: var(--c-ok); color: #04241a; }
+
+.connection {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 8px;
+  text-align: center;
+  background: var(--c-danger);
+  font-weight: 600;
+  z-index: 60;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

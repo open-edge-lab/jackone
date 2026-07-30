@@ -1,0 +1,19 @@
+{
+  "name": "jackone",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "JackOne - Blackjack giocato con le carte UNO, multiplayer in LAN via WebSocket",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "test": "node --test test/",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "engines": {
+    "node": ">=18.17"
+  }
+}
