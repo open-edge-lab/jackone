@@ -5,6 +5,11 @@
  *   node server/index.js --port 3210 --rigged
  *   node scripts/smoke.mjs 3210
  *
+ * Al posto della porta si può dare un indirizzo intero, per provare un server
+ * già installato — anche dietro a un reverse proxy:
+ *
+ *   node scripts/smoke.mjs wss://172.16.2.12/jackone/
+ *
  * Serve a verificare a colpo d'occhio il giro completo (puntate, turni, effetti
  * delle speciali, fase del banco, riepilogo) senza aprire il browser.
  */
@@ -12,8 +17,18 @@
 import { WebSocket } from 'ws';
 import { C2S, PHASE, S2C } from '../shared/protocol.js';
 
-const port = process.argv[2] ?? '3000';
-const ws = new WebSocket(`ws://127.0.0.1:${port}`);
+const target = process.argv[2] ?? '3000';
+const url = /^wss?:\/\//.test(target) ? target : `ws://127.0.0.1:${target}`;
+
+// Il certificato del server di sviluppo è autofirmato e la verifica lo
+// rifiuta. Disattivarla resta una scelta da dichiarare a mano, una volta per
+// comando, perché toglie ogni difesa da un intermediario:
+//
+//   JACKONE_TLS_INSECURE=1 node scripts/smoke.mjs wss://172.16.2.12/jackone/
+//
+// L'alternativa pulita è NODE_EXTRA_CA_CERTS con il certificato del server.
+const insicuro = process.env.JACKONE_TLS_INSECURE === '1';
+const ws = new WebSocket(url, insicuro ? { rejectUnauthorized: false } : {});
 const send = (t, payload = {}) => ws.send(JSON.stringify({ t, ...payload }));
 
 let lastLogId = 0;
