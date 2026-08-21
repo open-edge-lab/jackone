@@ -201,9 +201,8 @@ docker compose up -d --build     # ricostruisce e riavvia
 docker compose logs -f           # log del container
 ```
 
-Il container ascolta solo su `127.0.0.1:3000`: dall'esterno si passa sempre da nginx
-(`/etc/nginx/sites-available/jackone`, copia di `deploy/nginx/jackone.conf`). La barra
-finale in `proxy_pass` toglie il prefisso, così il server continua a vedere richieste
+Il container ascolta solo su `127.0.0.1:3000`: dall'esterno si passa sempre da nginx. La
+barra finale in `proxy_pass` toglie il prefisso, così il server continua a vedere richieste
 sulla root e non sa di stare dietro a nulla.
 
 Il certificato è autofirmato e vale per l'indirizzo IP: al primo accesso il browser
@@ -214,4 +213,60 @@ Per collaudare l'installazione senza aprire il browser:
 
 ```bash
 JACKONE_TLS_INSECURE=1 node scripts/smoke.mjs wss://172.16.2.12/jackone/
+```
+
+### La configurazione di nginx
+
+`deploy/nginx/jackone.conf` contiene **solo le `location` del gioco**, e si installa in
+`/etc/nginx/apps-enabled/jackone.conf`. Sul server non c'è `sudo` e `andrea` non è sudoer,
+quindi per toccare `/etc` si passa da `su`:
+
+```bash
+echo <password> | su root -c /opt/jackone/deploy/setup-nginx.sh
+```
+
+Lo script è idempotente e fa `nginx -t` prima di ricaricare. Serve solo quando cambia il
+file di configurazione: per un aggiornamento del codice basta `docker compose up -d --build`.
+
+Il `server` block che ospita quelle location — certificato, redirect da http,
+`absolute_redirect off`, pagina vuota sulla root — **non sta qui**: è condiviso con le altre
+applicazioni del server dev e vive nel repo **local-proxy-dev**
+(`/etc/nginx/sites-available/00-condiviso`). Anche la variabile `$connection_upgrade` che
+questo file usa arriva da lì.
+
+> Fino ad agosto 2026 quel blocco stava dentro `deploy/nginx/jackone.conf`, e JackOne
+> possedeva quindi la configurazione di tutti. La riga `include apps-enabled/*.conf` era
+> stata aggiunta a mano sul server e nel repo non c'era: bastava un `cp` del file — quello
+> che facevano gli script di deploy — per cancellarla e mettere offline easy-cad e
+> watermarker con un 404 secco. Ora ogni applicazione possiede solo le proprie location e
+> il `cp` è tornato innocuo.
+
+### Accesso da fuori la LAN
+
+Il firewall inoltra la porta pubblica **8443** verso la 443 del server, quindi da internet il
+gioco risponde su `https://<indirizzo-pubblico>:8443/jackone/`. Le porte 80 e 443 pubbliche
+sono chiuse: dall'esterno esiste solo la 8443.
+
+Due conseguenze, entrambe già gestite in configurazione.
+
+**I redirect devono restare relativi.** Con un `Location` assoluto nginx ci mette la propria
+porta d'ascolto — la 443, perché non sa di essere raggiunto sulla 8443. Chi arrivasse da fuori
+su `/jackone` senza barra finale verrebbe rimbalzato sulla 443, che dall'esterno è filtrata, e
+resterebbe appeso su una pagina bianca che carica all'infinito. Per questo il blocco `443`
+condiviso porta `absolute_redirect off` (repo local-proxy-dev): il browser risolve un `Location`
+relativo sull'origine da cui è arrivato, porta compresa. Chi aggiunge redirect stia alla larga
+dagli URL assoluti — un `return 301 https://$host/...` scritto a mano riavrebbe lo stesso
+difetto anche con quella direttiva attiva.
+
+**L'errore di certificato da fuori è atteso.** Il certificato ha `SAN: IP:172.16.2.12`, mentre
+dall'esterno lo si raggiunge su un indirizzo pubblico: il nome non combacia e il browser
+avvisa. Si prosegue lo stesso. Per toglierlo servirebbe un certificato emesso sul nome DDNS.
+
+Il collaudo dall'esterno vuole l'indirizzo pubblico e la porta, che `location.host` propaga
+già da sé all'URL del WebSocket:
+
+```bash
+# la barra finale va omessa apposta: verifica che il redirect conservi la porta
+curl -k -sL -o /dev/null -w '%{http_code} %{url_effective}\n' https://<indirizzo-pubblico>:8443/jackone
+# atteso: 200 https://<indirizzo-pubblico>:8443/jackone/
 ```
